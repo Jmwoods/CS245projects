@@ -38,6 +38,7 @@ public class HangmanGUI extends JFrame{
         teamName.setForeground(Color.white);
         this.add(title, BorderLayout.NORTH);
         this.add(teamName, BorderLayout.CENTER);
+        
               
     }
 
