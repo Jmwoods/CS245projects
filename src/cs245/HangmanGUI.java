@@ -13,8 +13,6 @@ package cs245;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.HashSet;
-import java.util.Set;
 import javax.swing.*;
 import java.util.Timer;
 import java.util.TimerTask;
