@@ -27,6 +27,8 @@ public class HangmanGUI extends JFrame implements ActionListener{
     
     private JButton play, highScore, credits, back, skip;
     
+    private JButton[] letterButton;
+    
     private JPanel mainPanel, menuPanel, gamePanel, letterPanel, displayMainPanel,
             displayPanel;
     
@@ -35,9 +37,10 @@ public class HangmanGUI extends JFrame implements ActionListener{
      * Creates the objects needed for the game to reach the main menu.
      */
     public HangmanGUI(){
-        super("CS 245 Hangman");
+        super("CS 245 Hangman v1.0");
         initializeWindow();
-        mainMenu();          
+        mainMenu();
+//          gameScreen();
     }
     /**
      * Creates the objects needed to display the initial start screen, and adds
@@ -79,9 +82,10 @@ public class HangmanGUI extends JFrame implements ActionListener{
         mainPanel.add(right, BorderLayout.LINE_END);   
     }
     /**
-     * Will create objects needed to show the credit screen.
-     */
-    
+     * Will create objects needed to show the credit or high score screen.
+     * @param isCredits needed to determine whether the screen will print credit
+     * or high score elements
+     */ 
     private void creditsOrHighScoreScreen(boolean isCredits){
         displayMainPanel = new JPanel(new BorderLayout());
         JPanel left = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -115,7 +119,7 @@ public class HangmanGUI extends JFrame implements ActionListener{
         }
         else{
             displayPanel = new JPanel(new GridLayout(6,1));
-            displayPanel.add(createLabel("High Scores", 46, Color.GREEN));
+            displayPanel.add(createLabel("High Scores", 40, Color.GREEN));
             for(int i = 0; i < 5; i++){
                 displayPanel.add(createLabel("ABC.....000", 22, Color.BLACK));   
             }
@@ -127,15 +131,12 @@ public class HangmanGUI extends JFrame implements ActionListener{
      * Adds the attributes for the JFrame created for the game.
      */
     private void initializeWindow(){
-//        mainPanel = new JPanel(new BorderLayout());
-//        mainPanel.setBackground(Color.BLACK);
         getContentPane().setBackground(Color.BLACK);       
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(WINDOW_LENGTH, WINDOW_WIDTH);
         this.setResizable(false);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
-//        this.add(mainPanel);
     }
     /**
      * Creates the specific labels needed for the hangman game
@@ -150,33 +151,77 @@ public class HangmanGUI extends JFrame implements ActionListener{
         tempLabel.setForeground(color);
         return tempLabel;
     }
+    /**
+     * Creates the buttons needed for the hangman game.
+     */
+    private void initLetterButtons(){
+        char letter = 'A';
+        letterButton = new JButton[26];
+        for(int a = 0; a < 26; a++){
+            letterButton[a] = new JButton(Character.toString(letter++));
+            letterButton[a].addActionListener(this);
+        }      
+    }
+    /**
+     * Creates the objects needed to display the hangman game GUI.
+     */
+    private void gameScreen(){
+        gamePanel = new JPanel(new BorderLayout());
+        JPanel centerGamePanel = new JPanel(new BorderLayout());
+        gamePanel.add(centerGamePanel, BorderLayout.CENTER);
+        JPanel wordPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 20));
+        
+        for(int a = 0; a < 5; a++){
+            wordPanel.add(createLabel("_", 46, Color.black));
+        }
+        centerGamePanel.add(wordPanel, BorderLayout.PAGE_END);
+        this.add(gamePanel);
+        JPanel topPanel = new JPanel();
+        topPanel.add(createLabel("Hangman", 36, Color.green), FlowLayout.LEFT);
+        initLetterButtons();
+        JPanel tt = new JPanel(new GridLayout(2,13));
+        for(JButton j : letterButton){
+            tt.add(j);
+        }
+        gamePanel.add(topPanel, BorderLayout.PAGE_START);
+        gamePanel.add(tt, BorderLayout.PAGE_END);
+    }
     @Override
     public void actionPerformed(ActionEvent e) {
-        Object object = e.getSource();
-        if(object == back){
+        JButton button = (JButton) e.getSource();
+        if(button == back){
             getContentPane().remove(displayMainPanel);
             mainMenu();
             getContentPane().validate();
             getContentPane().repaint();
         }
-        else if(object == play){
+        else if(button == play){
+            getContentPane().removeAll();
+            gameScreen();
+            getContentPane().validate();
+            getContentPane().repaint();
             //do nothing
         }
-        else if(object == highScore){
+        else if(button == highScore){
             getContentPane().remove(mainPanel);
             creditsOrHighScoreScreen(false);
             getContentPane().validate();
             getContentPane().repaint();
         }
-        else if(object == credits){
+        else if(button == credits){
             getContentPane().remove(mainPanel);
             creditsOrHighScoreScreen(true);
             getContentPane().validate();
             getContentPane().repaint();
 
         }
+        else if (button == skip){
+            //End game
+        }
         else{
-            //do nothing
+            //This condition is used for the letter buttons
+            button.getText();
+            //button.setEnabled(false);
         }
     }
     
