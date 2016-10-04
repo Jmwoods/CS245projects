@@ -23,7 +23,9 @@ public class HangmanGUI extends JFrame implements ActionListener{
     
     private static final int WINDOW_WIDTH = 400;
     
-    private JLabel title, teamName, creditLabel, name1, name2, name3, name4;
+    private int score;
+    
+    private JLabel title, teamName;
     
     private JButton play, highScore, credits, back, skip, end;
     
@@ -32,12 +34,17 @@ public class HangmanGUI extends JFrame implements ActionListener{
     private JPanel mainPanel, menuPanel, gamePanel, letterPanel, displayMainPanel,
             displayPanel;
     
+    private Hangman hangman;
+    
     private Timer timer;
+    
+    
     /**
      * Creates the objects needed for the game to reach the main menu.
      */
     public HangmanGUI(){
         super("CS 245 Hangman v1.0");
+        hangman = new Hangman();
         initializeWindow();
         endScreen();
 //mainMenu();
@@ -107,16 +114,11 @@ public class HangmanGUI extends JFrame implements ActionListener{
     private void creditsOrHighScore(boolean isCredits){
         if(isCredits){
             displayPanel = new JPanel(new GridLayout(5,1));
-            creditLabel = createLabel("Credits", 46, Color.red);
-            displayPanel.add(creditLabel);
-            name1 = createLabel("Ervin Maulas, 008873462", 22, Color.BLACK);
-            displayPanel.add(name1);
-            name2 = createLabel("Joel Woods, 000000000", 22, Color.BLACK);
-            displayPanel.add(name2);
-            name3 = createLabel("Jose Garcia, 000000000", 22, Color.BLACK);
-            displayPanel.add(name3);
-            name4 = createLabel ("Alan Chen, 000000000", 22, Color.BLACK);
-            displayPanel.add(name4);            
+            displayPanel.add(createLabel("Credits", 46, Color.red));
+            displayPanel.add(createLabel("Ervin Maulas, 008873462", 22, Color.BLACK));
+            displayPanel.add(createLabel("Joel Woods, 000000000", 22, Color.BLACK));
+            displayPanel.add(createLabel("Jose Garcia, 000000000", 22, Color.BLACK));
+            displayPanel.add(createLabel ("Alan Chen, 000000000", 22, Color.BLACK));            
         }
         else{
             displayPanel = new JPanel(new GridLayout(6,1));
@@ -135,7 +137,7 @@ public class HangmanGUI extends JFrame implements ActionListener{
         getContentPane().setBackground(Color.BLACK);       
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(WINDOW_LENGTH, WINDOW_WIDTH);
-        this.setResizable(false);
+        //this.setResizable(false);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
     }
@@ -189,32 +191,33 @@ public class HangmanGUI extends JFrame implements ActionListener{
     }
     /**
      * Game over screen which prints the user score.
-     * @TODO add score functionality
      */
     private void endScreen(){
+        hangman.reset(); //Resets variables for hangman game
         JPanel endPanel = new JPanel(new GridLayout(5,1));
         this.add(endPanel);
-        endPanel.add(new JLabel());
+        endPanel.add(new JLabel()); //Blank JLabel used for formatting
         endPanel.add(createLabel("GAME OVER", 46, Color.RED));
-        endPanel.add(new JLabel());
-        endPanel.add(createLabel("Score: 100", 30, Color.BLACK));
+        endPanel.add(new JLabel());//Black Jlabel used for formatting
+        endPanel.add(createLabel(Integer.toString(score), 30, Color.BLACK));
         JPanel left = new JPanel(new FlowLayout(FlowLayout.LEFT));
         back = new JButton("back");
         back.addActionListener(this);
         left.add(back);
         this.add(left, BorderLayout.PAGE_END);
-        getContentPane().revalidate();
-        getContentPane().repaint();
     }
     @Override
     public void actionPerformed(ActionEvent e) {
         JButton button = (JButton) e.getSource();
+        
+        //Returns the user to the main menu
         if(button == back || button == end){
             getContentPane().removeAll();
             mainMenu();
             getContentPane().validate();
             getContentPane().repaint();
         }
+        //Navigates to the hangman game screen
         else if(button == play){
             getContentPane().removeAll();
             gameScreen();
@@ -222,12 +225,14 @@ public class HangmanGUI extends JFrame implements ActionListener{
             getContentPane().repaint();
             //do nothing
         }
+        //Navigates to the high score screen
         else if(button == highScore){
             getContentPane().remove(mainPanel);
             creditsOrHighScoreScreen(false);
             getContentPane().validate();
             getContentPane().repaint();
         }
+        //Navigates to the credit screen
         else if(button == credits){
             getContentPane().remove(mainPanel);
             creditsOrHighScoreScreen(true);
@@ -235,13 +240,25 @@ public class HangmanGUI extends JFrame implements ActionListener{
             getContentPane().repaint();
 
         }
+        //Navigates to the game over screen; sets score to 0
         else if (button == skip){
-            //End game
+            score = 0;
+            getContentPane().removeAll();
+            endScreen();
+            getContentPane().validate();
+            getContentPane().repaint(); 
         }
+        //Condition is used for any letter button action in hangman game
         else{
-            //This condition is used for the letter buttons
-            button.getText();
-            //button.setEnabled(false);
+            System.out.println(button.getText());
+            //button.setEnabled(false);            
+            if (hangman.checkGameOver()){
+                score = hangman.getScore();
+                getContentPane().removeAll();
+                endScreen();
+                getContentPane().validate();
+                getContentPane().repaint();             
+            }
         }
     }
     
