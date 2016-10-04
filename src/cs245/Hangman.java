@@ -5,7 +5,7 @@
 * 
 *   Assignment: Point and Click game 
 *   @version v1.0
-*   Date Last Modified: 1 October 2016
+*   Date Last Modified: 3 October 2016
 *   Purpose: Starts a game of hangman, with GUI elements. The user has 6 tries
 *   to guess the word before the game is over. Maximum score is 100
 * 
@@ -91,6 +91,14 @@ public class Hangman {
      */
     public int getScore(){
         return score;
+    }
+    /**
+     * Resets the hangman game.
+     */
+    public void reset(){
+        score = 100;
+        numWrong = 0;
+        pickWord();
     }
     /**
      * Picks a word at random from the word list, and initializes a matching
